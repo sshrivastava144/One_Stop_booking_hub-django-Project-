@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Stop Booking Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+        }
+        .service-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            height: 100%;
+        }
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .cab-icon { background: linear-gradient(45deg, #ff6b6b, #ee5a52); }
+        .hotel-icon { background: linear-gradient(45deg, #48cae4, #0077b6); }
+        .flight-icon { background: linear-gradient(45deg, #06ffa5, #00d4aa); }
+        .train-icon { background: linear-gradient(45deg, #ffd60a, #ff8500); }
+        .sabji-icon { background: linear-gradient(45deg, #28a745, #20c997); }
+        .feature-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        .stats-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+        }
+        .footer {
+            background: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'accounts:home' %}">
+                <i class="fas fa-globe"></i> One Stop Hub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'accounts:home' %}">Home</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cab_booking:home' %}">Cab Booking</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sabji_market:home' %}">Sabji Market</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-3 fw-bold mb-4">Your One Stop Booking Hub</h1>
+            <p class="lead mb-5">Book cabs, hotels, flights, trains, and fresh vegetables - all in one place!</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'cab_booking:home' %}" class="btn btn-light btn-lg px-4 py-3 me-2">
+                    <i class="fas fa-taxi"></i> Book Cab Now
+                </a>
+                <a href="{% url 'sabji_market:home' %}" class="btn btn-success btn-lg px-4 py-3 me-2">
+                    <i class="fas fa-carrot"></i> Buy Vegetables
+                </a>
+                <a href="#services" class="btn btn-outline-light btn-lg px-4 py-3">
+                    <i class="fas fa-arrow-down"></i> Explore Services
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-5 py-3 me-3">
+                    <i class="fas fa-user-plus"></i> Get Started
+                </a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Our Services</h2>
+                <p class="lead text-muted">Everything you need for your travel and daily needs, in one place</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Cab Booking -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card service-card text-center p-4">
+                        <div class="icon-wrapper cab-icon text-white mx-auto">
+                            <i class="fas fa-taxi"></i>
+                        </div>
+                        <h4 class="mb-3">Cab Booking</h4>
+                        <p class="text-muted mb-4">Book from Ola, Uber, Rapido and more. Compare prices and choose the best option.</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'cab_booking:home' %}" class="btn btn-primary">
+                                <i class="fas fa-car"></i> Book Cab
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary">
+                                Login to Book
+                            </a>
+                        {% endif %}
+                        <div class="mt-3">
+                            <small class="text-success">
+                                <i class="fas fa-check-circle"></i> Available Now
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sabji Market -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card service-card text-center p-4">
+                        <div class="icon-wrapper sabji-icon text-white mx-auto">
+                            <i class="fas fa-carrot"></i>
+                        </div>
+                        <h4 class="mb-3">Sabji Market</h4>
+                        <p class="text-muted mb-4">Fresh vegetables delivered to your doorstep. Quality produce at competitive prices.</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'sabji_market:home' %}" class="btn btn-success">
+                                <i class="fas fa-shopping-cart"></i> Buy Vegetables
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-success">
+                                Login to Shop
+                            </a>
+                        {% endif %}
+                        <div class="mt-3">
+                            <small class="text-success">
+                                <i class="fas fa-check-circle"></i> Available Now
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotel Booking -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card service-card text-center p-4">
+                        <div class="icon-wrapper hotel-icon text-white mx-auto">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                        <h4 class="mb-3">Hotel Booking</h4>
+                        <p class="text-muted mb-4">Find and book hotels worldwide. Best prices guaranteed with instant confirmation.</p>
+                        <a href="#" class="btn btn-outline-secondary" disabled>
+                            <i class="fas fa-bed"></i> Coming Soon
+                        </a>
+                        <div class="mt-3">
+                            <small class="text-warning">
+                                <i class="fas fa-clock"></i> Coming Soon
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flight Booking -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card service-card text-center p-4">
+                        <div class="icon-wrapper flight-icon text-white mx-auto">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                        <h4 class="mb-3">Flight Booking</h4>
+                        <p class="text-muted mb-4">Book domestic and international flights. Compare airlines and get the best deals.</p>
+                        <a href="#" class="btn btn-outline-secondary" disabled>
+                            <i class="fas fa-plane-departure"></i> Coming Soon
+                        </a>
+                        <div class="mt-3">
+                            <small class="text-warning">
+                                <i class="fas fa-clock"></i> Coming Soon
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Train Booking -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card service-card text-center p-4">
+                        <div class="icon-wrapper train-icon text-white mx-auto">
+                            <i class="fas fa-train"></i>
+                        </div>
+                        <h4 class="mb-3">Train Booking</h4>
+                        <p class="text-muted mb-4">Book train tickets across India. Check availability and book confirmed seats.</p>
+                        <a href="#" class="btn btn-outline-secondary" disabled>
+                            <i class="fas fa-subway"></i> Coming Soon
+                        </a>
+                        <div class="mt-3">
+                            <small class="text-warning">
+                                <i class="fas fa-clock"></i> Coming Soon
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="feature-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="display-6 fw-bold mb-4">Why Choose One Stop Hub?</h2>
+                    <div class="row g-4">
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-shield-alt text-primary me-3 mt-1"></i>
+                                <div>
+                                    <h5>Secure Booking</h5>
+                                    <p class="text-muted">Your data and payments are completely secure with us.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-clock text-primary me-3 mt-1"></i>
+                                <div>
+                                    <h5>24/7 Support</h5>
+                                    <p class="text-muted">Round the clock customer support for all your needs.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-mobile-alt text-primary me-3 mt-1"></i>
+                                <div>
+                                    <h5>Easy to Use</h5>
+                                    <p class="text-muted">Simple and intuitive interface for hassle-free booking.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="d-flex">
+                                <i class="fas fa-star text-primary me-3 mt-1"></i>
+                                <div>
+                                    <h5>Best Prices</h5>
+                                    <p class="text-muted">Compare prices and get the best deals available.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="https://via.placeholder.com/500x400/667eea/ffffff?text=One+Stop+Hub" alt="Features" class="img-fluid rounded">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">1K+</h2>
+                    <p class="lead">Happy Customers</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">5+</h2>
+                    <p class="lead">Services Available</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">24/7</h2>
+                    <p class="lead">Customer Support</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">99%</h2>
+                    <p class="lead">Success Rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="fw-bold">One Stop Booking Hub</h5>
+                    <p class="text-muted">Your trusted partner for all travel and daily needs. Book cabs, hotels, flights, trains, and buy fresh vegetables with ease.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold">Services</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'cab_booking:home' %}" class="text-muted text-decoration-none">Cab Booking</a></li>
+                        <li><a href="{% url 'sabji_market:home' %}" class="text-muted text-decoration-none">Sabji Market</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Hotel Booking</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Flight Booking</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Train Booking</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <h6 class="fw-bold">Contact Info</h6>
+                    <p class="text-muted mb-2"><i class="fas fa-map-marker-alt me-2"></i> Indore, Madhya Pradesh, India</p>
+                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +91 98765 43210</p>
+                    <p class="text-muted"><i class="fas fa-envelope me-2"></i> info@onestophub.com</p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="text-muted mb-0">&copy; 2025 One Stop Booking Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

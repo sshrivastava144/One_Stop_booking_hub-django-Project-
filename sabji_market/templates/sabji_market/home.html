@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabji Market - Fresh Vegetables Online</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 80px 0;
+        }
+        .category-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            height: 100%;
+            overflow: hidden;
+        }
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .shop-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            height: 100%;
+        }
+        .shop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+        .category-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+        }
+        .stats-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 60px 0;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+        }
+        .btn-success:hover {
+            background: linear-gradient(45deg, #20c997, #28a745);
+            transform: translateY(-2px);
+        }
+        .badge-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'accounts:home' %}">
+                <i class="fas fa-globe"></i> One Stop Hub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'sabji_market:home' %}">Sabji Market</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sabji_market:shop_list' %}">Browse Shops</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'sabji_market:cart' %}">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            My Account
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'sabji_market:my_orders' %}">My Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sabji_market:shop_dashboard' %}">My Shops</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-3 fw-bold mb-4">Fresh Vegetables Delivered</h1>
+            <p class="lead mb-5">Order fresh, organic vegetables from local shops and get them delivered to your doorstep</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'sabji_market:shop_list' %}" class="btn btn-light btn-lg px-5 py-3 me-3">
+                    <i class="fas fa-shopping-basket"></i> Shop Now
+                </a>
+                <a href="{% url 'sabji_market:register_shop' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                    <i class="fas fa-store"></i> Register Your Shop
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="btn btn-light btn-lg px-5 py-3 me-3">
+                    <i class="fas fa-sign-in-alt"></i> Login to Shop
+                </a>
+                <a href="{% url 'accounts:register' %}" class="btn btn-outline-light btn-lg px-5 py-3">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </a>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Product Categories Section -->
+    {% if product_categories %}
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Shop by Category</h2>
+                <p class="lead text-muted">Fresh vegetables organized by category</p>
+            </div>
+            
+            <div class="row g-4">
+                {% for category in product_categories %}
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card category-card text-center p-4">
+                        <div class="category-icon mx-auto">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h5 class="mb-3">{{ category.name }}</h5>
+                        <p class="text-muted mb-4">{{ category.description|default:"Fresh and organic" }}</p>
+                        <a href="{% url 'sabji_market:products_by_category' category.id %}" class="btn btn-success">
+                            <i class="fas fa-arrow-right"></i> Browse
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Featured Shops Section -->
+    {% if featured_shops %}
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Featured Shops</h2>
+                <p class="lead text-muted">Top-rated vegetable shops in your area</p>
+            </div>
+            
+            <div class="row g-4">
+                {% for shop in featured_shops %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card shop-card">
+                        <div class="position-relative">
+                            {% if shop.shop_image %}
+                                <img src="{{ shop.shop_image.url }}" class="card-img-top" alt="{{ shop.name }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-success text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fas fa-store fa-3x"></i>
+                                </div>
+                            {% endif %}
+                            
+                            {% if shop.is_open %}
+                                <span class="badge bg-success badge-status">Open</span>
+                            {% else %}
+                                <span class="badge bg-danger badge-status">Closed</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">{{ shop.name }}</h5>
+                            <p class="text-muted small">
+                                <i class="fas fa-map-marker-alt me-1"></i>{{ shop.city }}
+                            </p>
+                            <p class="card-text">{{ shop.description|truncatewords:15 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="text-warning">
+                                    {% for i in "12345"|make_list %}
+                                        <i class="fas fa-star"></i>
+                                    {% endfor %}
+                                    <small class="text-muted">(4.5)</small>
+                                </div>
+                                {% if shop.is_delivery_available %}
+                                    <small class="text-success">
+                                        <i class="fas fa-truck"></i> Delivery Available
+                                    </small>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mt-3">
+                                {% if user.is_authenticated %}
+                                    <a href="{% url 'sabji_market:shop_products' shop.id %}" class="btn btn-success w-100">
+                                        <i class="fas fa-shopping-basket"></i> Shop Now
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-success w-100">
+                                        Login to Shop
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="{% url 'sabji_market:shop_list' %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-store"></i> View All Shops
+                </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Why Choose Our Sabji Market?</h2>
+                <p class="lead text-muted">The best way to buy fresh vegetables online</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h5>Fresh & Organic</h5>
+                    <p class="text-muted">Sourced directly from local farmers and organic producers</p>
+                </div>
+                
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-truck-fast"></i>
+                    </div>
+                    <h5>Fast Delivery</h5>
+                    <p class="text-muted">Get your vegetables delivered fresh to your doorstep</p>
+                </div>
+                
+                <div class="col-md-4 text-center mb-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h5>Best Prices</h5>
+                    <p class="text-muted">Compare prices from multiple shops and get the best deals</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">{{ featured_shops|length }}+</h2>
+                    <p class="lead">Active Shops</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">500+</h2>
+                    <p class="lead">Happy Customers</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">{{ product_categories|length }}+</h2>
+                    <p class="lead">Product Categories</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 fw-bold">24/7</h2>
+                    <p class="lead">Fresh Supply</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-5 bg-light">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Ready to Start Shopping?</h2>
+            <p class="lead mb-4">Join thousands of customers who trust us for fresh vegetables</p>
+            {% if user.is_authenticated %}
+                <a href="{% url 'sabji_market:shop_list' %}" class="btn btn-success btn-lg px-5 py-3 me-3">
+                    <i class="fas fa-shopping-basket"></i> Start Shopping
+                </a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-success btn-lg px-5 py-3 me-3">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </a>
+            {% endif %}
+            <a href="{% url 'sabji_market:register_shop' %}" class="btn btn-outline-success btn-lg px-5 py-3">
+                <i class="fas fa-store"></i> Become a Seller
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="fw-bold">Sabji Market</h5>
+                    <p class="text-muted">Your trusted partner for fresh vegetables. Supporting local farmers and bringing quality produce to your table.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'sabji_market:shop_list' %}" class="text-muted text-decoration-none">Browse Shops</a></li>
+                        <li><a href="{% url 'sabji_market:product_categories' %}" class="text-muted text-decoration-none">Categories</a></li>
+                        <li><a href="{% url 'sabji_market:register_shop' %}" class="text-muted text-decoration-none">Sell with Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="fw-bold">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-muted text-decoration-none">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <h6 class="fw-bold">Contact Info</h6>
+                    <p class="text-muted mb-2"><i class="fas fa-map-marker-alt me-2"></i> Indore, Madhya Pradesh, India</p>
+                    <p class="text-muted mb-2"><i class="fas fa-phone me-2"></i> +91 98765 43210</p>
+                    <p class="text-muted"><i class="fas fa-envelope me-2"></i> sabji@onestophub.com</p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="text-muted mb-0">&copy; 2025 Sabji Market - One Stop Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

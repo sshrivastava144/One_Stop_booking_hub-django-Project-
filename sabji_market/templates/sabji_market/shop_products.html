@@ -1,0 +1,201 @@
+{% extends 'sabji_market/base.html' %}
+
+{% block title %}{{ shop.name }} - Sabji Market{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Shop Header -->
+    <div class="card mb-4">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ shop.image.url|default:'/static/images/shop-default.jpg' }}" class="img-fluid rounded-start" alt="{{ shop.name }}" style="height: 250px; object-fit: cover; width: 100%;">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h2 class="card-title">{{ shop.name }}</h2>
+                    <p class="card-text">{{ shop.description }}</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Category:</strong> {{ shop.category.name }}</p>
+                            <p class="mb-1"><strong>Phone:</strong> {{ shop.phone }}</p>
+                            <p class="mb-1"><strong>Rating:</strong> 
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg_rating %}
+                                        <i class="fas fa-star text-warning"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-warning"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                ({{ avg_rating }})
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1">
+                                <span class="badge bg-{% if shop.is_open %}success{% else %}danger{% endif %}">
+                                    {% if shop.is_open %}Open{% else %}Closed{% endif %}
+                                </span>
+                            </p>
+                            {% if shop.opening_time and shop.closing_time %}
+                            <p class="mb-1"><strong>Hours:</strong> {{ shop.opening_time|time:"H:i" }} - {{ shop.closing_time|time:"H:i" }}</p>
+                            {% endif %}
+                            {% if shop.is_delivery_available %}
+                            <p class="mb-1"><strong>Delivery:</strong> ₹{{ shop.delivery_charge }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'sabji_market:add_review' shop.id %}" class="btn btn-outline-primary">
+                        <i class="fas fa-star"></i> Write Review
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Filter Products -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filter Products</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" name="search" value="{{ form.search.value|default:'' }}" placeholder="Search products...">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in product_categories %}
+                                <option value="{{ category.id }}" {% if form.category.value == category.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="min_price" class="form-label">Min Price</label>
+                                <input type="number" class="form-control" id="min_price" name="min_price" value="{{ form.min_price.value|default:'' }}" placeholder="₹0">
+                            </div>
+                            <div class="col-6">
+                                <label for="max_price" class="form-label">Max Price</label>
+                                <input type="number" class="form-control" id="max_price" name="max_price" value="{{ form.max_price.value|default:'' }}" placeholder="₹1000">
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Filter</button>
+                        <a href="{% url 'sabji_market:shop_products' shop.id %}" class="btn btn-outline-secondary w-100 mt-2">Clear</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Products</h3>
+                <p class="text-muted">{{ products|length }} products available</p>
+            </div>
+            
+            {% if products %}
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="card product-card h-100">
+                            <img src="{{ product.image.url|default:'/static/images/product-default.jpg' }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                            {% if product.discount_percentage %}
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-danger">{{ product.discount_percentage }}% OFF</span>
+                            </div>
+                            {% endif %}
+                            {% if product.is_organic %}
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <span class="badge bg-success">Organic</span>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <h6 class="card-title">{{ product.name }}</h6>
+                                <p class="card-text">{{ product.description|truncatewords:10 }}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        {% if product.discount_percentage %}
+                                            <span class="text-decoration-line-through text-muted">₹{{ product.price }}</span>
+                                            <strong class="text-success">₹{{ product.get_discounted_price }}</strong>
+                                        {% else %}
+                                            <strong>₹{{ product.price }}</strong>
+                                        {% endif %}
+                                        <small class="text-muted">per {{ product.unit }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card-footer">
+                                {% if user.is_authenticated %}
+                                <form method="post" action="{% url 'sabji_market:add_to_cart' product.id %}">
+                                    {% csrf_token %}
+                                    <div class="input-group mb-2">
+                                        <input type="number" class="form-control" name="quantity" value="1" min="1" max="99">
+                                        <span class="input-group-text">{{ product.unit }}</span>
+                                    </div>
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="fas fa-cart-plus"></i> Add to Cart
+                                    </button>
+                                </form>
+                                {% else %}
+                                <p class="text-muted text-center">Login to add to cart</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4>No products found</h4>
+                    <p class="text-muted">Try adjusting your search criteria</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Reviews Section -->
+    {% if reviews %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h4>Customer Reviews</h4>
+            {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h6>{{ review.customer.username }}</h6>
+                        <div>
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p class="mb-1">{{ review.comment }}</p>
+                    <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

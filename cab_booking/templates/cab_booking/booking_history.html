@@ -1,0 +1,8 @@
+<h2>My Cab Bookings</h2>
+<ul>
+  {% for booking in bookings %}
+    <li>{{ booking.pickup_location }} to {{ booking.drop_location }} on {{ booking.date }} at {{ booking.time }} - {{ booking.status }}</li>
+  {% empty %}
+    <li>No bookings yet.</li>
+  {% endfor %}
+</ul>

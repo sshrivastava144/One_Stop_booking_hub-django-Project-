@@ -1,0 +1,136 @@
+{% extends 'sabji_market/base.html' %}
+
+{% block title %}All Shops - Sabji Market{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Filter Shops</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" name="search" value="{{ form.search.value|default:'' }}" placeholder="Search shops...">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                <option value="{{ category.id }}" {% if form.category.value == category.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ category.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="delivery_available" name="delivery_available" {% if form.delivery_available.value %}checked{% endif %}>
+                                <label class="form-check-label" for="delivery_available">
+                                    Delivery Available
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                        <a href="{% url 'sabji_market:shop_list' %}" class="btn btn-outline-secondary w-100 mt-2">Clear</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>All Shops</h2>
+                <p class="text-muted">{{ shops|length }} shops found</p>
+            </div>
+            
+            {% if shops %}
+                <div class="row">
+                    {% for shop in shops %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card shop-card h-100">
+                            <img src="{{ shop.image.url|default:'/static/images/shop-default.jpg' }}" class="card-img-top" alt="{{ shop.name }}" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ shop.name }}</h5>
+                                <p class="card-text">{{ shop.description|truncatewords:15 }}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-success">{{ shop.category.name }}</span>
+                                    <small class="text-muted">
+                                        {% if shop.is_delivery_available %}
+                                            <i class="fas fa-truck"></i> Delivery: ₹{{ shop.delivery_charge }}
+                                        {% else %}
+                                            <i class="fas fa-store"></i> Pickup Only
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="badge bg-{% if shop.is_open %}success{% else %}danger{% endif %}">
+                                        {% if shop.is_open %}Open{% else %}Closed{% endif %}
+                                    </span>
+                                    <small class="text-muted">
+                                        {% if shop.opening_time and shop.closing_time %}
+                                            {{ shop.opening_time|time:"H:i" }} - {{ shop.closing_time|time:"H:i" }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a href="{% url 'sabji_market:shop_products' shop.id %}" class="btn btn-primary w-100">
+                                    View Products
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if shops.has_other_pages %}
+                <nav aria-label="Shop pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if shops.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ shops.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.delivery_available %}&delivery_available={{ request.GET.delivery_available }}{% endif %}">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in shops.paginator.page_range %}
+                            {% if shops.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.delivery_available %}&delivery_available={{ request.GET.delivery_available }}{% endif %}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if shops.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ shops.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.delivery_available %}&delivery_available={{ request.GET.delivery_available }}{% endif %}">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4>No shops found</h4>
+                    <p class="text-muted">Try adjusting your search criteria</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

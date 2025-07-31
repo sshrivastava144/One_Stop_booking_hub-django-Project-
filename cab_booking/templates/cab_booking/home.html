@@ -1,0 +1,220 @@
+<!-- cab_booking/templates/cab_booking/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cab Booking - One Stop Booking Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+        }
+        .service-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .cab-type-badge {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        .booking-card {
+            border-left: 4px solid #667eea;
+            background: #f8f9fa;
+        }
+        .quick-book-section {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'accounts:home' %}">
+                <i class="fas fa-car"></i> One Stop Hub
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{% url 'accounts:home' %}">Home</a>
+                <a class="nav-link active" href="{% url 'cab_booking:home' %}">Cab Booking</a>
+                <a class="nav-link" href="{% url 'cab_booking:my_bookings' %}">My Bookings</a>
+                <a class="nav-link" href="{% url 'accounts:profile' %}">Profile</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">
+                <i class="fas fa-taxi"></i> Book Your Ride
+            </h1>
+            <p class="lead mb-5">Choose from Ola, Uber, Rapido and more. Compare prices and book instantly!</p>
+            <a href="{% url 'cab_booking:book_cab' %}" class="btn btn-light btn-lg px-5 py-3">
+                <i class="fas fa-plus-circle"></i> Book Now
+            </a>
+        </div>
+    </section>
+
+    <div class="container my-5">
+        <!-- Quick Actions -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-3">
+                <div class="card service-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Quick Book</h5>
+                        <p class="card-text">Book a cab instantly with your favorite service</p>
+                        <a href="{% url 'cab_booking:book_cab' %}" class="btn btn-primary">Book Cab</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card service-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="fas fa-calculator fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Fare Calculator</h5>
+                        <p class="card-text">Calculate and compare fares across services</p>
+                        <a href="{% url 'cab_booking:fare_calculator' %}" class="btn btn-success">Calculate Fare</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card service-card h-100 text-center p-4">
+                    <div class="card-body">
+                        <i class="fas fa-history fa-3x text-info mb-3"></i>
+                        <h5 class="card-title">My Bookings</h5>
+                        <p class="card-text">View and manage your booking history</p>
+                        <a href="{% url 'cab_booking:my_bookings' %}" class="btn btn-info">View Bookings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Services -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="mb-4"><i class="fas fa-car-side"></i> Available Services</h3>
+                <div class="row">
+                    {% for service in cab_services %}
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card service-card text-center p-3">
+                            <div class="card-body">
+                                {% if service.logo %}
+                                <img src="{{ service.logo.url }}" alt="{{ service.name }}" class="img-fluid mb-2" style="height: 60px;">
+                                {% else %}
+                                <i class="fas fa-taxi fa-3x text-warning mb-2"></i>
+                                {% endif %}
+                                <h6 class="card-title">{{ service.name }}</h6>
+                                <small class="text-muted">Base: ₹{{ service.base_fare }} | Per KM: ₹{{ service.per_km_rate }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Cab Types -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="mb-4"><i class="fas fa-car"></i> Available Cab Types</h3>
+                <div class="row">
+                    {% for cab_type in cab_types %}
+                    <div class="col-md-2 col-6 mb-3 text-center">
+                        <span class="cab-type-badge d-inline-block">
+                            {{ cab_type.get_name_display }}
+                        </span>
+                        <br>
+                        <small class="text-muted">{{ cab_type.capacity }} seats</small>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
+        {% if recent_bookings %}
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="mb-4"><i class="fas fa-clock"></i> Recent Bookings</h3>
+                {% for booking in recent_bookings %}
+                <div class="card booking-card mb-3">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <h6 class="mb-0">{{ booking.booking_id }}</h6>
+                                <small class="text-muted">{{ booking.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>{{ booking.cab_service.name }}</strong>
+                                <br>
+                                <small>{{ booking.cab_type.get_name_display }}</small>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-map-marker-alt text-success"></i> {{ booking.pickup_location|truncatechars:30 }}
+                                <br>
+                                <i class="fas fa-flag-checkered text-danger"></i> {{ booking.drop_location|truncatechars:30 }}
+                            </div>
+                            <div class="col-md-2">
+                                <span class="badge bg-{% if booking.status == 'completed' %}success{% elif booking.status == 'cancelled' %}danger{% elif booking.status == 'in_progress' %}warning{% else %}primary{% endif %}">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </div>
+                            <div class="col-md-1">
+                                <a href="{% url 'cab_booking:booking_detail' booking.booking_id %}" class="btn btn-sm btn-outline-primary">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="text-center">
+                    <a href="{% url 'cab_booking:my_bookings' %}" class="btn btn-outline-primary">View All Bookings</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Quick Book Section -->
+        <div class="quick-book-section text-center">
+            <h3><i class="fas fa-rocket"></i> Need a Ride Now?</h3>
+            <p class="mb-4">Book instantly and get a cab within minutes</p>
+            <a href="{% url 'cab_booking:book_cab' %}" class="btn btn-light btn-lg px-5">
+                <i class="fas fa-car"></i> Book Instant Ride
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>&copy; 2025 One Stop Booking Hub. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

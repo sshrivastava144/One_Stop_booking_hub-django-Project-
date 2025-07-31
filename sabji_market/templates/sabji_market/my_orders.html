@@ -1,0 +1,123 @@
+{% extends 'sabji_market/base.html' %}
+
+{% block title %}My Orders - Sabji Market{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">My Orders</h2>
+    
+    {% if orders %}
+        {% for order in orders %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <strong>Order #{{ order.order_id }}</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% elif order.status == 'processing' %}warning{% else %}info{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>₹{{ order.total_amount }}</strong>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <small class="text-muted">{{ order.created_at|date:"M d, Y H:i" }}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>{{ order.shop.name }}</h6>
+                        <p class="mb-1"><strong>Customer:</strong> {{ order.customer_name }}</p>
+                        <p class="mb-1"><strong>Phone:</strong> {{ order.customer_phone }}</p>
+                        <p class="mb-1"><strong>Delivery Type:</strong> {{ order.get_delivery_type_display }}</p>
+                        {% if order.delivery_type == 'delivery' %}
+                        <p class="mb-1"><strong>Address:</strong> {{ order.delivery_address }}</p>
+                        {% endif %}
+                        
+                        <div class="mt-3">
+                            <h6>Items:</h6>
+                            {% for item in order.items.all %}
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span>{{ item.product.name }} x {{ item.quantity }}</span>
+                                <span>₹{{ item.get_total_price }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border p-3 rounded">
+                            <h6>Order Summary</h6>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Subtotal:</span>
+                                <span>₹{{ order.subtotal }}</span>
+                            </div>
+                            {% if order.delivery_charge > 0 %}
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Delivery:</span>
+                                <span>₹{{ order.delivery_charge }}</span>
+                            </div>
+                            {% endif %}
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <strong>Total:</strong>
+                                <strong>₹{{ order.total_amount }}</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <a href="{% url 'sabji_market:order_detail' order.order_id %}" class="btn btn-primary btn-sm w-100">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <!-- Pagination -->
+        {% if orders.has_other_pages %}
+        <nav aria-label="Orders pagination">
+            <ul class="pagination justify-content-center">
+                {% if orders.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ orders.previous_page_number }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                {% for num in orders.paginator.page_range %}
+                    {% if orders.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if orders.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ orders.next_page_number }}">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shopping-bag fa-4x text-muted mb-3"></i>
+            <h4>No orders yet</h4>
+            <p class="text-muted">Start shopping to see your orders here</p>
+            <a href="{% url 'sabji_market:shop_list' %}" class="btn btn-success btn-lg">
+                <i class="fas fa-store"></i> Browse Shops
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

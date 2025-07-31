@@ -1,0 +1,66 @@
+{% extends 'sabji_market/base.html' %}
+
+{% block title %}Home - Sabji Market{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 mb-4">Fresh Vegetables at Your Doorstep</h1>
+        <p class="lead mb-4">Connect with local vegetable vendors and get fresh produce delivered</p>
+        <a href="{% url 'sabji_market:shop_list' %}" class="btn btn-success btn-lg me-3">Shop Now</a>
+        <a href="{% url 'sabji_market:register_shop' %}" class="btn btn-outline-light btn-lg">Become a Vendor</a>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Shop by Category</h2>
+        <div class="row">
+            {% for category in product_categories %}
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card category-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-leaf fa-3x mb-3"></i>
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <a href="{% url 'sabji_market:products_by_category' category.id %}" class="btn btn-light">Browse</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Shops -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Featured Shops</h2>
+        <div class="row">
+            {% for shop in featured_shops %}
+            <div class="col-md-4 mb-4">
+                <div class="card shop-card h-100">
+                    <img src="{{ shop.image.url|default:'/static/images/shop-default.jpg' }}" class="card-img-top" alt="{{ shop.name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ shop.name }}</h5>
+                        <p class="card-text">{{ shop.description|truncatewords:20 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-success">{{ shop.category.name }}</span>
+                            <small class="text-muted">
+                                {% if shop.is_delivery_available %}
+                                    <i class="fas fa-truck"></i> Delivery
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'sabji_market:shop_products' shop.id %}" class="btn btn-primary w-100">Visit Shop</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

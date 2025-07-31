@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fare Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .calculator-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .calculator-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .fare-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .breakdown {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 600px) {
+            .calculator-container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>🚗 Fare Calculator</h1>
+        
+        <form id="fareForm">
+            <div class="form-group">
+                <label for="transportType">
+                    <span class="icon">🚊</span>Transport Type
+                </label>
+                <select id="transportType" required>
+                    <option value="">Select Transport Type</option>
+                    <option value="taxi">🚕 Taxi</option>
+                    <option value="auto">🛺 Auto Rickshaw</option>
+                    <option value="bus">🚌 Bus</option>
+                    <option value="metro">🚇 Metro</option>
+                    <option value="uber">🚗 Uber/Ola</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="distance">
+                    <span class="icon">📏</span>Distance (km)
+                </label>
+                <input type="number" id="distance" step="0.1" min="0.1" required placeholder="Enter distance in kilometers">
+            </div>
+
+            <div class="form-group">
+                <label for="timeOfDay">
+                    <span class="icon">🕐</span>Time of Day
+                </label>
+                <select id="timeOfDay" required>
+                    <option value="">Select Time</option>
+                    <option value="day">Day Time (6 AM - 10 PM)</option>
+                    <option value="night">Night Time (10 PM - 6 AM)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="passengers">
+                    <span class="icon">👥</span>Number of Passengers
+                </label>
+                <input type="number" id="passengers" min="1" max="8" value="1" required>
+            </div>
+
+            <button type="submit" class="calculate-btn">Calculate Fare</button>
+        </form>
+
+        <div id="result" class="result">
+            <h3>Your Fare</h3>
+            <div class="fare-amount" id="fareAmount">₹0</div>
+            <div class="breakdown" id="breakdown"></div>
+        </div>
+    </div>
+
+    <script>
+        const fareRates = {
+            taxi: {
+                baseFare: 25,
+                perKmRate: 12,
+                nightSurcharge: 1.25,
+                waitingCharges: 2
+            },
+            auto: {
+                baseFare: 18,
+                perKmRate: 8,
+                nightSurcharge: 1.5,
+                waitingCharges: 1
+            },
+            bus: {
+                baseFare: 5,
+                perKmRate: 1.5,
+                nightSurcharge: 1,
+                waitingCharges: 0
+            },
+            metro: {
+                baseFare: 10,
+                perKmRate: 2,
+                nightSurcharge: 1,
+                waitingCharges: 0
+            },
+            uber: {
+                baseFare: 30,
+                perKmRate: 10,
+                nightSurcharge: 1.2,
+                waitingCharges: 3
+            }
+        };
+
+        document.getElementById('fareForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateFare();
+        });
+
+        function calculateFare() {
+            const transportType = document.getElementById('transportType').value;
+            const distance = parseFloat(document.getElementById('distance').value);
+            const timeOfDay = document.getElementById('timeOfDay').value;
+            const passengers = parseInt(document.getElementById('passengers').value);
+
+            if (!transportType || !distance || !timeOfDay || !passengers) {
+                alert('Please fill all fields!');
+                return;
+            }
+
+            const rates = fareRates[transportType];
+            let baseFare = rates.baseFare;
+            let distanceFare = distance * rates.perKmRate;
+            let totalFare = baseFare + distanceFare;
+
+            // Apply night surcharge
+            if (timeOfDay === 'night') {
+                totalFare *= rates.nightSurcharge;
+            }
+
+            // Add waiting charges (estimated)
+            let waitingCharges = rates.waitingCharges * 5; // Assuming 5 minutes waiting
+
+            // For some transport types, multiply by passengers
+            if (transportType === 'bus' || transportType === 'metro') {
+                totalFare *= passengers;
+            }
+
+            totalFare += waitingCharges;
+
+            // Round to nearest rupee
+            totalFare = Math.round(totalFare);
+
+            // Display result
+            displayResult(totalFare, baseFare, distanceFare, waitingCharges, timeOfDay, transportType, passengers);
+        }
+
+        function displayResult(totalFare, baseFare, distanceFare, waitingCharges, timeOfDay, transportType, passengers) {
+            const resultDiv = document.getElementById('result');
+            const fareAmountDiv = document.getElementById('fareAmount');
+            const breakdownDiv = document.getElementById('breakdown');
+
+            fareAmountDiv.textContent = `₹${totalFare}`;
+
+            let breakdown = `
+                <strong>Fare Breakdown:</strong><br>
+                Base Fare: ₹${Math.round(baseFare)}<br>
+                Distance Charges: ₹${Math.round(distanceFare)}<br>
+                Waiting Charges: ₹${Math.round(waitingCharges)}<br>
+            `;
+
+            if (timeOfDay === 'night') {
+                breakdown += `Night Surcharge: Applied<br>`;
+            }
+
+            if (transportType === 'bus' || transportType === 'metro') {
+                breakdown += `Passengers: ${passengers}<br>`;
+            }
+
+            breakdownDiv.innerHTML = breakdown;
+            resultDiv.style.display = 'block';
+            
+            // Smooth scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Add some interactive animations
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            element.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

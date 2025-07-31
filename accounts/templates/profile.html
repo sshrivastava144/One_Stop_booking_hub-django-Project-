@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Section</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .profile-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar:hover {
+            transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .camera-overlay {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .camera-overlay:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        .profile-name {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-title {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .profile-form {
+            padding: 40px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa726);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-button {
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .file-input-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .save-button {
+            width: 100%;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa726);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+
+        .save-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+        }
+
+        .save-button:active {
+            transform: translateY(-1px);
+        }
+
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .switch.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .switch-handle {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .switch.active .switch-handle {
+            transform: translateX(30px);
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 10px;
+                border-radius: 20px;
+            }
+
+            .profile-header {
+                padding: 30px 20px;
+            }
+
+            .profile-name {
+                font-size: 2rem;
+            }
+
+            .profile-stats {
+                gap: 20px;
+            }
+
+            .profile-form {
+                padding: 30px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="avatar-container">
+                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" alt="Profile Picture" class="avatar" id="profileAvatar">
+                <div class="camera-overlay" onclick="document.getElementById('avatarInput').click()">
+                    📷
+                </div>
+            </div>
+            <h1 class="profile-name">John Doe</h1>
+            <p class="profile-title">Senior Software Developer</p>
+            
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-number">127</span>
+                    <span class="stat-label">Projects</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">1.2k</span>
+                    <span class="stat-label">Followers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">89</span>
+                    <span class="stat-label">Following</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Form -->
+        <div class="profile-form">
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrfmiddlewaretoken" value="csrf_token_placeholder">
+                
+                <div class="form-grid">
+                    <!-- Personal Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <div class="section-icon">👤</div>
+                            Personal Information
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-input" name="first_name" placeholder="Enter your first name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-input" name="last_name" placeholder="Enter your last name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" name="email" placeholder="your.email@example.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-input" name="phone" placeholder="+1 (555) 123-4567">
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <div class="section-icon">💼</div>
+                            Professional Info
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Job Title</label>
+                            <input type="text" class="form-input" name="job_title" placeholder="e.g. Senior Developer">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Company</label>
+                            <input type="text" class="form-input" name="company" placeholder="Your company name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Experience Level</label>
+                            <select class="form-select" name="experience">
+                                <option value="">Select experience</option>
+                                <option value="entry">Entry Level (0-2 years)</option>
+                                <option value="mid">Mid Level (2-5 years)</option>
+                                <option value="senior">Senior Level (5-10 years)</option>
+                                <option value="lead">Lead/Manager (10+ years)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Skills</label>
+                            <input type="text" class="form-input" name="skills" placeholder="JavaScript, Python, React, etc.">
+                        </div>
+                    </div>
+
+                    <!-- Location & Social -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <div class="section-icon">📍</div>
+                            Location & Social
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-input" name="city" placeholder="Your city">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <select class="form-select" name="country">
+                                <option value="">Select country</option>
+                                <option value="in">India</option>
+                                <option value="us">United States</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                                <option value="au">Australia</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">LinkedIn Profile</label>
+                            <input type="url" class="form-input" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">GitHub Profile</label>
+                            <input type="url" class="form-input" name="github" placeholder="https://github.com/yourusername">
+                        </div>
+                    </div>
+
+                    <!-- Preferences -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <div class="section-icon">⚙️</div>
+                            Preferences
+                        </h3>
+                        
+                        <div class="form-group">
+                            <div class="switch-container">
+                                <label class="form-label">Email Notifications</label>
+                                <div class="switch active" onclick="toggleSwitch(this)">
+                                    <div class="switch-handle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="switch-container">
+                                <label class="form-label">Public Profile</label>
+                                <div class="switch active" onclick="toggleSwitch(this)">
+                                    <div class="switch-handle"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="switch-container">
+                                <label class="form-label">Show Online Status</label>
+                                <div class="switch" onclick="toggleSwitch(this)">
+                                    <div class="switch-handle"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biography Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <div class="section-icon">📝</div>
+                        About You
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Biography</label>
+                        <textarea class="form-textarea" name="bio" placeholder="Tell us about yourself, your interests, and your professional journey..."></textarea>
+                    </div>
+                </div>
+
+                <!-- File Upload Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <div class="section-icon">📎</div>
+                        Profile Picture & Resume
+                    </h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Profile Picture</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" class="file-input" id="avatarInput" name="profile_picture" accept="image/*" onchange="previewImage(this)">
+                            <button type="button" class="file-input-button" onclick="document.getElementById('avatarInput').click()">
+                                📷 Choose Profile Picture
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Resume/CV</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" class="file-input" id="resumeInput" name="resume" accept=".pdf,.doc,.docx">
+                            <button type="button" class="file-input-button" onclick="document.getElementById('resumeInput').click()">
+                                📄 Upload Resume
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-button">Save Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileAvatar').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Add floating animation to form sections
+        document.querySelectorAll('.form-section').forEach((section, index) => {
+            section.style.animationDelay = `${index * 0.1}s`;
+            section.style.animation = 'fadeInUp 0.6s ease forwards';
+        });
+
+        // Add focus effects to form inputs
+        document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Handle file input visual feedback
+        document.getElementById('avatarInput').addEventListener('change', function() {
+            const fileName = this.files[0]?.name || 'Choose Profile Picture';
+            const button = this.nextElementSibling;
+            button.innerHTML = `✅ ${fileName.length > 20 ? fileName.substring(0, 20) + '...' : fileName}`;
+        });
+
+        document.getElementById('resumeInput').addEventListener('change', function() {
+            const fileName = this.files[0]?.name || 'Upload Resume';
+            const button = this.nextElementSibling;
+            button.innerHTML = `✅ ${fileName.length > 20 ? fileName.substring(0, 20) + '...' : fileName}`;
+        });
+    </script>
+</body>
+</html>
